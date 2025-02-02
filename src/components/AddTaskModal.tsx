@@ -4,8 +4,8 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { DateValue } from "../types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask } from "../redux/taskSlice";
-import { auth } from "../config/firebase";
 import { toast } from "react-toastify";
+import { addActivity } from "../redux/activitySlice";
 
 const AddTaskModal: FC = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -70,14 +70,22 @@ const AddTaskModal: FC = () => {
             title: taskTitle,
             description: taskDescription,
             category: taskCategory,
-            due_date: taskDueDate.startDate,
+            due_date: taskDueDate.startDate ? taskDueDate.startDate.toISOString() : null,
             status: taskStatus,
             user: user.uid,
             file: fileBase64, // Add the Base64-encoded file to the task data
         };
     
         try {
-            await dispatch(addTask(taskData));
+            const res = await dispatch(addTask(taskData));
+            console.log(res,'ddd')
+            await dispatch(
+                            addActivity({
+                                activity: `Created task: ${taskTitle}`,
+                                task_id: res?.payload.id || "",
+                                updated_date: new Date().toISOString(),
+                            })
+                        );
             toast.success("Task added successfully!");
         } catch (error) {
             console.error("Error adding task:", error);

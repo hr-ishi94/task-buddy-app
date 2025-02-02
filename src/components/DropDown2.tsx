@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import EditTaskModal from "./EditTaskModal";
+import { deleteTask } from "../redux/taskSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
-const DropDown2 = ({ selectType, options, onSelect }: { selectType: any; options?: string[]; onSelect: (selected: string) => void }) => {
+const DropDown2 = ({ selectType, options, onSelect ,taskId,task}: { selectType: any; options?: string[]; onSelect: (selected: string) => void;taskId:string }) => {
   
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null); // Track selected option
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,8 +31,14 @@ const DropDown2 = ({ selectType, options, onSelect }: { selectType: any; options
     setIsOpen(false); 
   };
 
+  const handleDeleteTask = () => {
+    dispatch(deleteTask(taskId));
+    setIsOpen(false);
+    toast.success("Task Deleted Successfully!")
+  };
+
   return (
-    <div className={`relative  ${selectedOption? "bg-gray-300 px-3 py-1 rounded-lg w-full":options?"border-2 rounded-full border-gray-300 p-2":"px-2"}`} ref={dropdownRef}>
+    <div className={`relative  ${selectedOption? "bg-gray-300 px-3 py-1 rounded-lg w-full":options?"border-2 rounded-full border-gray-300 p-2":"px-3"}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className="text-gray-600 flex items-center justify-center text-sm cursor-pointer "
@@ -58,12 +68,16 @@ const DropDown2 = ({ selectType, options, onSelect }: { selectType: any; options
             {!options && (
               <>
                 <li>
-                  <EditTaskModal />
+                  <EditTaskModal task={task} editor/>
                 </li>
                 <li>
-                  <a className="flex gap-1 text-start px-2 py-2 text-red-700 font-semibold items-center hover:bg-gray-100">
+                <button
+                    onClick={handleDeleteTask}
+                    className="flex gap-1 text-start px-2 py-2 text-red-700 font-semibold items-center hover:bg-gray-100 w-full"
+                  >
+                     
                     <Icon icon="material-symbols:delete" width="16" height="16" /> Delete
-                  </a>
+                  </button>
                 </li>
               </>
             )}

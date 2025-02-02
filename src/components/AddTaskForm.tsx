@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTask } from "../redux/taskSlice";
 import { toast } from "react-toastify";
 
+
+
 const AddTaskForm: FC = ({setAddForm}) => {
     const [taskTitle, setTaskTitle] = useState<string>("");
     const [taskCategory, setTaskCategory] = useState<string>("");

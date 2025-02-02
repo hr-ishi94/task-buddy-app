@@ -1,14 +1,36 @@
 import { Icon } from "@iconify/react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { updateTask,deleteTask } from "../redux/taskSlice";
 
 const GroupSelect = ({ selectedTasks, setSelectedTasks }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [status, setStatus] = useState("Status");
-  const options = ["TO-DO", "IN-PROGRESS", "COMPLETED"];
+  const options = ["Todo", "In-Progress", "Completed"];
+  const dispatch = useDispatch();
+
+  const handleUpdateStatus = (newStatus) => {
+    selectedTasks.forEach((taskId) => {
+      dispatch(updateTask({ id: taskId, updatedTask: { status: newStatus } }));
+    });
+    setStatus(newStatus);
+    setSelectedTasks([]);
+    setShowOptions(false);
+
+  };
+
+  const handleDeleteTasks = () => {
+    selectedTasks.forEach((taskId) => {
+      dispatch(deleteTask(taskId));
+    });
+    setSelectedTasks([]);
+  };
 
   return (
     <div className="bg-gray-900 text-gray-100 w-[30%] max-md:w-[80%] flex py-2 rounded-xl px-3 justify-between relative">
       
+      <div className="flex items-center gap-1">
+
       <div className="flex px-2 py-1 border-2 border-gray-100 rounded-full gap-2 items-center text-sm">
         <p>{selectedTasks.length} Tasks Selected</p>
         <button onClick={() => setSelectedTasks([])}>
@@ -21,8 +43,9 @@ const GroupSelect = ({ selectedTasks, setSelectedTasks }) => {
         icon="fluent:select-all-on-24-filled"
         width="18"
         height="18"
-        className="relative right-14 max-md:right-5 top-3"
-      />
+        className=""
+        />
+        </div>
 
       
       <div className="flex gap-2 relative">
@@ -38,11 +61,8 @@ const GroupSelect = ({ selectedTasks, setSelectedTasks }) => {
               {options.map((option) => (
                 <div 
                   key={option} 
-                  className="px-1 py-3 text-center hover:bg-gray-600 hover:font-semibold cursor-pointer"
-                  onClick={() => {
-                    setStatus(option);
-                    setShowOptions(false);
-                  }}
+                  className="px-1 py-3 text-center hover:bg-gray-600 hover:font-semibold cursor-pointer uppercase"
+                  onClick={() => handleUpdateStatus(option)}
                 >
                   {option}
                 </div>
@@ -54,7 +74,7 @@ const GroupSelect = ({ selectedTasks, setSelectedTasks }) => {
         
         <button 
           className="px-3 py-2 border-2 border-gray-100 rounded-full text-sm text-red-900 bg-red-800 bg-opacity-15 hover:bg-red-300"
-          onClick={() => setSelectedTasks([])}
+          onClick={handleDeleteTasks}
         >
           Delete
         </button>

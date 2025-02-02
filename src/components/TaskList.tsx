@@ -5,6 +5,7 @@ import AddTaskForm from "./AddTaskForm"
 import DropDown2 from "./DropDown2"
 import EditTaskModal from "./EditTaskModal"
 import DropDown1 from "./DropDown1"
+import { format, isToday } from 'date-fns';
 
 const TaskList = ({
     listType,
@@ -42,7 +43,7 @@ const TaskList = ({
       };
 
     return (
-    <div className= {`rounded-lg bg-customBg ${!isOpen || isFiltered ? "" : listType === "Todo" ? "min-h-64" : "min-h-40"} `}>
+    <div className= {`rounded-lg bg-customBg ${!isOpen || isFiltered ? "" : listType === "Todo" ? "min-h-72" : "min-h-40"} `}>
         <div className={`${bgColor} w-full h-10 ${isOpen?"rounded-t-lg":'rounded-lg'} flex  items-center justify-between text-sm font-bold px-5`}>
 
             <h1>{listType} ({currTasks?.length||'0'})</h1>
@@ -100,11 +101,21 @@ const TaskList = ({
                                 <EditTaskModal task={task} isCompleted ={listType ==='Completed'} />
                                 </td>
                                 <td className="px-16 py-4 w-1/6 max-md:hidden text-center">
-                                    {new Date(task.due_date).toLocaleDateString()}
+                                   {
+                                                                           // Conditionally check and format the date
+                                    (() => {
+                                    const taskDueDate = new Date(task.due_date);
+
+                                    // Check if the date is today
+                                    return isToday(taskDueDate)
+                                        ? 'Today'  // If it's today, show "Today"
+                                        : format(taskDueDate, 'dd MMM, yyyy');  // Otherwise, format as "DD MMM, YYYY"
+                                    })()
+                                }
 
                                 </td>
                                 <td className="px-16 py-4 w-1/5 max-md:hidden text-center">
-                                    <DropDown1 currValue = {task.status} />
+                                    <DropDown1 currValue = {task.status} taskId={task.id}/>
                                 </td>
                                 <td className="pl-16 text-center py-4 w-1/6 max-md:hidden">
                                     {task.category}
@@ -112,7 +123,7 @@ const TaskList = ({
                                 
                                 <td className="pl-44 py-4 w-1/6 max-md:hidden">
                                     <button>
-                                        <DropDown2 selectType={'solar:menu-dots-bold'} />
+                                        <DropDown2 selectType={'solar:menu-dots-bold'}  taskId={task.id} task={task}/>
                                     </button>
                                 </td>
                                 
