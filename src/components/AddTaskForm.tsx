@@ -1,52 +1,116 @@
-import { Icon } from "@iconify/react"
-import { useState } from "react";
-import Datepicker from "react-tailwindcss-datepicker"
+import { FC, useState } from "react";
+import { Icon } from "@iconify/react";
+import Datepicker from "react-tailwindcss-datepicker";
 import DropDown2 from "./DropDown2";
+import { useDispatch, useSelector } from "react-redux";
+import { addTask } from "../redux/taskSlice";
+import { toast } from "react-toastify";
 
-
-
-const AddTaskForm = () => {
-    const [value, setValue] = useState({ 
-        startDate: null, 
+const AddTaskForm: FC = ({setAddForm}) => {
+    const [taskTitle, setTaskTitle] = useState<string>("");
+    const [taskCategory, setTaskCategory] = useState<string>("");
+    const [taskDueDate, setTaskDueDate] = useState<{ startDate: Date | null; endDate: Date | null }>({
+        startDate: null,
         endDate: null
     });
-  return (
-    <div className="bg-customBg w-full h-10 py-12 border-red-100 flex items-center px-10">
-        <form className="flex flex-col gap-2 justify-center ">
-            <div className="flex justify-around items-center w-full gap-28">
+    const [taskStatus, setTaskStatus] = useState<string>("");
 
-            <input type="text" placeholder="Task Title" className="bg-customBg text-xs py font-medium ml-10 py-2  pr-10"/>
-            
-            <div className="relative w-full max-w-xs ml-40">
-                
-                <Datepicker
-                    placeholder="Add date"
-                    containerClassName="flex items-center text-xs border-gray-300 border-2 px-1 py-1  rounded-full"
-                    inputClassName="bg-customBg "
-                    value={value}
-                    primaryColor="purple"
-                    asSingle={true}
-                    useRange={false}
-                    onChange={(newValue) => setValue(newValue)}
-                />
-            </div>
-            <div className="mr-8 px-2 py-2 mt-1 rounded-full border-2 border-gray-300">
-                <DropDown2 selectType={'ic:baseline-plus'} options={["To-Do","In-progress","Completed"]}/>
+    const user = useSelector((state) => state.auth.user);
 
-            </div>
-            <div className="ml-10 px-2 py-2 mt-1 rounded-full border-2 border-gray-300">
+    const dispatch = useDispatch();
 
-                <DropDown2 selectType={'ic:baseline-plus'} options={["Work","Personnel"]}/>
-            </div>
-            
-            </div>
-            <div className="flex gap-3 px-10">
-                <button className="flex items-center gap-1 text-white bg-customPurple text-sm px-3 py-1 rounded-full" type="submit">Add <Icon icon="tdesign:enter" width="15" height="15" /></button>
-                <button className="uppercase text-xs font-bold">Cancel</button>
-            </div>
-        </form>
-    </div>
-  )
-}
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-export default AddTaskForm
+        // Basic validation
+        if (!taskTitle || !taskCategory || !taskDueDate.startDate || !taskStatus) {
+            toast.info("Please fill all required fields.");
+            return;
+        }
+
+        // Prepare task data
+        const taskData = {
+            title: taskTitle,
+            category: taskCategory,
+            due_date: taskDueDate.startDate,
+            status: taskStatus,
+            user: user.uid
+        };
+
+        try {
+            await dispatch(addTask(taskData));
+            toast.success("Task added successfully!");
+        } catch (error) {
+            console.error("Error adding task:", error);
+            toast.error("Failed to add task.");
+        }
+
+        // Reset the form
+        setTaskTitle("");
+        setTaskCategory("");
+        setTaskDueDate({ startDate: null, endDate: null });
+        setTaskStatus("");
+        setAddForm(false)
+    };
+
+    return (
+        <div className="bg-customBg w-full h-10 py-14 border-red-100 flex items-center px-10 border-b-2">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2 justify-center">
+                <div className="flex justify-around items-center w-full gap-28">
+                    <input
+                        type="text"
+                        placeholder="Task Title"
+                        className="bg-customBg text-xs py font-medium ml-10 py-2 pr-10 focus:outline-none focus:bg-gray-200 px-2 "
+                        value={taskTitle}
+                        onChange={(e) => setTaskTitle(e.target.value)}
+                        required
+                    />
+
+                    <div className="relative  max-w-xs ml-36 ">
+                        <Datepicker
+                            placeholder="Add date"
+                            containerClassName="flex items-center text-xs border-gray-300 border-2 px-1 py-1 rounded-full"
+                            inputClassName="bg-customBg"
+                            value={taskDueDate}
+                            primaryColor="purple"
+                            asSingle={true}
+                            useRange={false}
+                            onChange={(newValue) => setTaskDueDate(newValue)}
+                            required
+                        />
+                    </div>
+
+                    <div className="mr-8 mt-1 ">
+                        <DropDown2
+                            selectType={'ic:baseline-plus'}
+                            options={["Todo", "In-Progress", "Completed"]}
+                            onSelect={(status) => setTaskStatus(status)}
+                        />
+                    </div>
+
+                    <div className="ml-12 mt-1 ">
+                        <DropDown2
+                            selectType={'ic:baseline-plus'}
+                            options={["Work", "Personal"]}
+                            onSelect={(category) => setTaskCategory(category)}
+                        />
+                    </div>
+                </div>
+
+                <div className="flex gap-3 px-10">
+                    <button
+                        type="submit"
+                        className="flex items-center gap-1 text-white bg-customPurple text-sm px-3 py-1 rounded-full"
+                    >
+                        Add <Icon icon="tdesign:enter" width="15" height="15" />
+                    </button>
+                    <button type="button" className="uppercase text-xs font-bold" onClick={()=>setAddForm(false)}>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+export default AddTaskForm;

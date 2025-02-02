@@ -1,45 +1,81 @@
-import { FC } from "react";
-import TaskList from "../components/TaskList"
-import {type TaskViewProps} from "../types/types";
+import { FC, useState } from "react";
+import TaskList from "../components/TaskList";
+import GroupSelect from "../components/GroupSelect";
+import { type TaskViewProps } from "../types/types";
+import { Icon } from "@iconify/react";
 
+const ListView: FC<TaskViewProps> = ({ tasks, isFiltered }) => {
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]); // Store selected task IDs
 
+  const handleSortChange = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
 
-const ListView:FC<TaskViewProps> = ({tasks}) => {
-  
+  const sortedTasks = [...tasks].sort((a, b) => {
+    const dateA = new Date(a.due_date.seconds * 1000);
+    const dateB = new Date(b.due_date.seconds * 1000);
+    return sortOrder === "asc"
+      ? dateA.getTime() - dateB.getTime()
+      : dateB.getTime() - dateA.getTime();
+  });
+
   return (
     <>
       <div className="mx-10 my-10">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 max-md:hidden">
-                <thead className="text-xs text-gray-700 border-t-2  ">
-                    <tr>
-                        <th scope="col" className="px-20 py-3 w-2/6">
-                            Task name
-                        </th>
-                        <th scope="col" className="px-24 py-3 w-1/6">
-                            Due on
-                        </th>
-                        <th scope="col" className="px-16 py-3 w-1/6">
-                            Task Status
-                        </th>
-                        <th scope="col" className="px-16 py-3 w-1/6">
-                            Task Category
-                        </th>
-                        <th scope="col" className="px-8 py-3 w-1/6">
-                        
-                        </th>
-                    </tr>
-                </thead>
-            </table>
-                <TaskList listType="Todo" tasks={tasks}/>
-                <br />
-                <TaskList listType="In-Progress" tasks={tasks}/>
-                <br />
-                <TaskList listType="Completed" tasks={tasks}/>
+        <table className="w-full text-sm text-left text-gray-500 max-md:hidden">
+          <thead className="text-xs text-gray-700 border-t-2">
+            <tr>
+              <th scope="col" className="px-20 py-3 w-2/6">Task name</th>
+              <th scope="col" className="px-28 py-3 w-1/5">
+                <p className="flex">
+                  Due on{" "}
+                  <button onClick={handleSortChange}>
+                    <Icon icon="ph:caret-up-down-fill" width="12" height="12" />
+                  </button>
+                </p>
+              </th>
+              <th scope="col" className="px-5 py-3 w-1/6">Task Status</th>
+              <th scope="col" className="px-10 py-3 w-1/6">Task Category</th>
+              <th scope="col" className="py-3 w-[10%]"></th>
+            </tr>
+          </thead>
+        </table>
+
+        
+        <TaskList
+          listType="Todo"
+          isFiltered={isFiltered}
+          tasks={sortedTasks.filter((task) => task.status === "Todo")}
+          selectedTasks={selectedTasks}
+          setSelectedTasks={setSelectedTasks}
+        />
+        <br />
+        <TaskList
+          listType="In-Progress"
+          isFiltered={isFiltered}
+          tasks={sortedTasks.filter((task) => task.status === "In-Progress")}
+          selectedTasks={selectedTasks}
+          setSelectedTasks={setSelectedTasks}
+        />
+        <br />
+        <TaskList
+          listType="Completed"
+          isFiltered={isFiltered}
+          tasks={sortedTasks.filter((task) => task.status === "Completed")}
+          selectedTasks={selectedTasks}
+          setSelectedTasks={setSelectedTasks}
+        />
+      </div>
+
+    
+      {selectedTasks.length > 0 && (
+        <div className="w-full fixed bottom-5 flex items-center justify-center z-50 ">
+          <GroupSelect selectedTasks={selectedTasks} setSelectedTasks={setSelectedTasks} />
         </div>
-
+      )}
     </>
+  );
+};
 
-  )
-}
-
-export default ListView
+export default ListView;

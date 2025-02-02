@@ -4,21 +4,45 @@ import {type TaskType,ListType } from "../types/types"
 import AddTaskForm from "./AddTaskForm"
 import DropDown2 from "./DropDown2"
 import EditTaskModal from "./EditTaskModal"
+import DropDown1 from "./DropDown1"
 
-const TaskList = ({listType,tasks}:{listType:ListType['listType'],tasks?:TaskType[]}) => {
-
+const TaskList = ({
+    listType,
+    tasks,
+    isFiltered,
+    selectedTasks,
+    setSelectedTasks
+  }: {
+    listType: ListType["listType"];
+    tasks?: TaskType[];
+    isFiltered: boolean;
+    selectedTasks: string[];
+    setSelectedTasks: (tasks: string[]) => void;
+  }) => {
     const [isOpen, setIsOpen] = useState<boolean>(true)
+    const [addForm, setAddForm] = useState<boolean>(false)
 
     const bgColor:string ={
         "Todo":'bg-[#FAC3FF]',
         'In-Progress':'bg-[#85D9F1]',
         'Completed':'bg-[#CEFFCC]'
     }[listType]
-
+    console.log(isFiltered,'klklkl')
     const currTasks:TaskType[]  = tasks?.filter((task)=>task.status === listType) || []
-    
+    if (isFiltered && currTasks.length === 0) {
+        return null
+    }
+
+    const handleCheckboxChange = (taskId: string) => {
+        setSelectedTasks(
+          selectedTasks.includes(taskId)
+            ? selectedTasks.filter((id) => id !== taskId)
+            : [...selectedTasks, taskId]
+        );
+      };
+
     return (
-    <div className= {`rounded-lg bg-customBg ${!isOpen ? "" : listType === "Todo" ? "min-h-60" : "min-h-40"} `}>
+    <div className= {`rounded-lg bg-customBg ${!isOpen || isFiltered ? "" : listType === "Todo" ? "min-h-64" : "min-h-40"} `}>
         <div className={`${bgColor} w-full h-10 ${isOpen?"rounded-t-lg":'rounded-lg'} flex  items-center justify-between text-sm font-bold px-5`}>
 
             <h1>{listType} ({currTasks?.length||'0'})</h1>
@@ -47,10 +71,12 @@ const TaskList = ({listType,tasks}:{listType:ListType['listType'],tasks?:TaskTyp
                 {listType=== 'Todo' &&
                     <div className="max-md:hidden">
                     
-                    <div className="bg-customBg w-full h-10 border-b-2 border-red-100 flex items-center px-10">
-                    <button className="uppercase text-xs font-bold flex items-center gap-1 justify-center text-gray-800 px-5"><Icon icon="ic:baseline-plus" width="20" height="20" className="text-customPurple"/> Add Task</button>
+                    <div className="bg-customBg w-full h-10 border-b-2 border-red-100 flex items-center px-10 ">
+                    <button onClick={() => setAddForm((prev) => !prev)} className="uppercase text-xs font-bold flex items-center gap-1 justify-center text-gray-800 px-5"><Icon icon="ic:baseline-plus" width="20" height="20" className="text-customPurple" /> Add Task</button>
                     </div>
-                    <AddTaskForm/>
+                    {addForm &&
+                    <AddTaskForm setAddForm= {setAddForm}/>
+                    }
                 </div>}
                 
                 {(currTasks && currTasks.length != 0) ?
@@ -59,22 +85,28 @@ const TaskList = ({listType,tasks}:{listType:ListType['listType'],tasks?:TaskTyp
                     
                         {currTasks?.map((task)=>(
                             
-                            <tr className=" border-t-2 border-gray-200 w-full  text-black max-md:flex">
-                                <td className="py-5 pl-5 pr-3 flex items-center justify-center gap-2 text-gray-600  ">
-                                    <input type="checkbox" />
+                            <tr key={task.id} className=" border-b-2  border-gray-200 w-full  text-black max-md:flex">
+                                <td className="py-6 pl-5 pr-3 flex items-center justify-center gap-2 text-gray-600  ">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedTasks.includes(task.id)}
+                                    onChange={() => handleCheckboxChange(task.id)}
+                                    className="mr-2"
+                                    />
                                     <Icon icon="icon-park-outline:drag" width="15" height="15" className="max-md:hidden"/>
-                                    <Icon icon="ep:success-filled" width="15" height="15" className="text-green-600"/>
+                                    <Icon icon="ep:success-filled" width="15" height="15" className={listType==='Completed'?"text-green-700":""}/>
                                 </td>
-                                <td scope="row" className="pl-2 py-4 font-medium w-2/6 max-md:w-4/6">
-                                <EditTaskModal task={task}/>
+                                <td scope="row" className="pl-2 py-4 font-semibold w-2/6 max-md:w-4/6">
+                                <EditTaskModal task={task} isCompleted ={listType ==='Completed'} />
                                 </td>
-                                <td className="px-16 py-4 w-1/6 max-md:hidden">
-                                    {task.dueDate}
+                                <td className="px-16 py-4 w-1/6 max-md:hidden text-center">
+                                    {new Date(task.due_date).toLocaleDateString()}
+
                                 </td>
-                                <td className="px-16 py-4 w-1/6 max-md:hidden">
-                                    {task.status}
+                                <td className="px-16 py-4 w-1/5 max-md:hidden text-center">
+                                    <DropDown1 currValue = {task.status} />
                                 </td>
-                                <td className="px-16 py-4 w-1/6 max-md:hidden">
+                                <td className="pl-16 text-center py-4 w-1/6 max-md:hidden">
                                     {task.category}
                                 </td>
                                 

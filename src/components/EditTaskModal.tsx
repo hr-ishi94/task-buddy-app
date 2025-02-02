@@ -4,7 +4,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { Icon } from "@iconify/react";
 import { TaskType } from "../types/types";
 
-const EditTaskModal = ({task}:{task?:TaskType}) => {
+const EditTaskModal = ({task,isCompleted}:{task?:TaskType}) => {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [value, setValue] = useState({ 
         startDate: null, 
@@ -26,10 +26,9 @@ const EditTaskModal = ({task}:{task?:TaskType}) => {
 
     return (
     <div>
-        {/* <button className=" bg-customPurple rounded-full text-xs text-white px-5 py-3 " >ADD TASK</button> */}
             {
                 task?
-                <a className="cursor-pointer" onClick={() => setIsEditOpen(true)}>{task.title}</a>:
+                <a className={`cursor-pointer ${isCompleted && "line-through"}`} onClick={() => setIsEditOpen(true)}>{task.title}</a>:
                 <a className="flex text-start px-2 py-2 font-semibold gap-1 items-center hover:bg-gray-100 focus:ring-blue-400" onClick={() => setIsEditOpen(true)}>
                     <Icon icon="eva:edit-2-fill" width="16" height="16" className="text-black" /> Edit
 

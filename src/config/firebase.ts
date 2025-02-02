@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth'
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs,query, where ,addDoc,updateDoc,deleteDoc, doc} from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_GOOGLE_API_KEY, // Securely stored in .env
@@ -15,4 +15,4 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app)
 const auth = getAuth(app);
 
-export { auth , db, getDocs, collection }
+export { auth , db, getDocs, collection, query, where, addDoc, updateDoc, deleteDoc, doc}

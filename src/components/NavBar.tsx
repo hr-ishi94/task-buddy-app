@@ -1,14 +1,17 @@
-import { Board_icon, List_icon, Task_dark } from "../utils/constants"
+import { Board_icon, List_icon, Task_dark, User_avatar } from "../utils/constants"
 import {Icon} from "@iconify/react" 
 import {type NavProps } from "../types/types"
 import { FC } from "react"
 import { signOut } from "firebase/auth"
 import { auth } from "../config/firebase"
-import { redirect, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 
 
 const NavBar:FC<NavProps> = ({isSelected,setIsSelected}:any) => {
+
+    const user = useSelector((state)=>state.auth.user)
 
     const navigate = useNavigate()
     const LogOut =()=>{
@@ -33,9 +36,16 @@ const NavBar:FC<NavProps> = ({isSelected,setIsSelected}:any) => {
                 <p onClick={()=>setIsSelected("board")}  className={`flex text-sm font-bold cursor-pointer mx-1   ${isSelected !== 'list'?"border-zinc-800 border-b-2 text-zinc-800":"text-zinc-600"}`}><img src={Board_icon} alt="Board Icon" /> Board</p>
             </div>
         </div>
-        <div className="flex flex-col gap-2"> 
-            <p className="flex gap-1 text-base font-bold items-center text-zinc-700 "> <Icon icon="stash:user-avatar-light" width="24" height="24" />Avatar</p>
+        <div className="flex flex-col gap-2 "> 
+        <div className="flex text-sm  gap-1 w-15 items-center">
+            <img src={user?.photoURL || User_avatar}  className="rounded-full w-8 h-8" />
+
+            <p className="flex font-bold text-zinc-700 "> {user?.displayName||"USER"}</p>
+        </div>
+            <div className="flex justify-end items-center">
+
             <button onClick={LogOut} className="flex bg-[#FFF9F9] hover:bg-gray-300 items-center gap-1 py-2 px-4 rounded-xl text-xs font-medium border-2 max-sm:hidden"><Icon icon="simple-line-icons:logout" className="" width={15} height={15}/> Logout</button>
+            </div>
         </div>
     </div>
   )

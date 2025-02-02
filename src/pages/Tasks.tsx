@@ -1,101 +1,65 @@
-import NavBar from '../components/NavBar'
-import Filters from '../components/Filters'
-import {type TaskType, ViewType } from '../types/types';
-import { FC, useEffect, useState } from 'react';
-import ListView from './ListView';
-import BoardView from './BoardView';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTasks } from "../redux/taskSlice";
+import NavBar from "../components/NavBar";
+import Filters from "../components/Filters";
+import ListView from "./ListView";
+import BoardView from "./BoardView";
+// import  RootState  from "../redux/store";
+import { TaskType, ViewType } from "../types/types";
+import NotFound from "../components/NotFound";
+import  Loader  from "../components/Loader";
 
-
-const Tasks:FC = () => {
-
-     const tasks:TaskType[] = [
-        {
-          id: 1,
-          title: 'Interview with Design Team',
-          dueDate: 'Today',
-          status: 'Todo',
-          category: 'Work',
-        },
-        {
-          id: 2,
-          title: 'Team Meeting',
-          dueDate: '30 Dec, 2024',
-          status: 'Todo',
-          category: 'Personal',
-        },
-        {
-          id: 3,
-          title: 'Design a Dashboard page along with wireframes',
-          dueDate: '31 Dec, 2024',
-          status: 'Todo',
-          category: 'Work',
-        },
-        {
-          id: 4,
-          title: 'Design a Dashboard page along with wireframes',
-          dueDate: '31 Dec, 2024',
-          status: 'Todo',
-          category: 'Work',
-        },
-        {
-          id: 5,
-          title: 'Design a Dashboard page along with wireframes',
-          dueDate: '31 Dec, 2024',
-          status: 'In-Progress',
-          category: 'Work',
-        },
-        {
-          id: 6,
-          title: 'Design a Dashboard page along with wireframes',
-          dueDate: '31 Dec, 2024',
-          status: 'In-Progress',
-          category: 'Work',
-        },
-        {
-          id: 4,
-          title: 'Design a Dashboard page along with wireframes',
-          dueDate: '31 Dec, 2024',
-          status: 'In-Progress',
-          category: 'Work',
-        },
-        {
-          id: 5,
-          title: 'Design a Dashboard page along with wireframes',
-          dueDate: '31 Dec, 2024',
-          status: 'Completed',
-          category: 'Work',
-        },
-        {
-          id: 6,
-          title: 'Design a Dashboard page along with wireframesasdasdasfasfasfasfsesgs sdgsdgsdgsdgs efsdgsg ',
-          dueDate: '31 Dec, 2024',
-          status: 'Completed',
-          category: 'Work',
-        },
-      ];
-
-      const [isSelected, setIsSelected] = useState<ViewType>("list")
-
-      useEffect(()=>{
-        const handleResize = ()=>{
-            
-            if(window.innerWidth <768){
-                setIsSelected("list")
-            }
-        }
-        window.addEventListener('resize',handleResize)
-        handleResize()
-        return ()=>window.removeEventListener('resize',handleResize)
-      },[])
+const Tasks = () => {
+  const dispatch = useDispatch();
+  const { tasks, status, error } = useSelector((state) => state.tasks);
+  const user = useSelector((state) => state.auth.user);
   
-      
+  const [isSelected, setIsSelected] = useState<ViewType>("list");
+  const [filteredTasks, setFilteredTasks] = useState<TaskType[]>([]);
+  const [isFiltered, setIsFiltered] = useState(false)
+  console.log(isFiltered,'klklkl')
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchTasks(user.uid)); 
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    setFilteredTasks(tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsSelected("list");
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  if (status === "loading"){
+
+    return <Loader/>
+  } 
+  // if (status === "failed") return <p>Error: {error}</p>;
+
   return (
     <div>
-        <NavBar isSelected={isSelected} setIsSelected={setIsSelected}/>
-        <Filters/>
-        {isSelected === 'list' ?<ListView tasks={tasks}/>:<BoardView tasks={tasks}/>}
+      <NavBar isSelected={isSelected} setIsSelected={setIsSelected} />
+      <Filters tasks={tasks} setFilteredTasks={setFilteredTasks} setIsFiltered = {setIsFiltered}/>
+      {filteredTasks.length === 0 ? <NotFound/>:<>
+      {isSelected === "list" ? (
+        <ListView tasks={filteredTasks} isFiltered={isFiltered}/>
+      ) : (
+        <BoardView tasks={filteredTasks} isFiltered={isFiltered}/>
+      )}
+      </>}
+      
     </div>
-  )
-}
+  );
+};
 
-export default Tasks
+export default Tasks;
