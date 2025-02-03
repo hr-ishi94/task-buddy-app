@@ -19,7 +19,8 @@ const Login:FC = () => {
             
             const credential = GoogleAuthProvider.credentialFromResult(result)
             const token = credential?.accessToken
-
+            console.log(token,'token');
+            
             const user = result.user
             const userData = {
                 uid: user.uid,
@@ -38,6 +39,10 @@ const Login:FC = () => {
                 const email = error.customData.email
         
                 const credential = GoogleAuthProvider.credentialFromError(error)
+                console.log(errorCode,'errorcode',credential,'credential')
+            
+                console.log(errorMessage,'message',email,'email')
+                
             })
     
     }

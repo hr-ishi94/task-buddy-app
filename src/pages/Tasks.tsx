@@ -40,6 +40,8 @@ const Tasks = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  console.log(error,'error')
+
   if (status === "loading") {
     return <Loader />;
   }
