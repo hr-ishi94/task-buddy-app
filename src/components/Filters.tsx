@@ -9,7 +9,6 @@ const Filters: FC<FilterViewProps> = ({ tasks, setFilteredTasks,setIsFiltered })
 
   const dueDates = [...new Set(tasks.map((task) => formatDate(task.due_date)))]
   .sort((a, b) => {
-    // Parse dates for sorting
     const dateA = new Date(a.split(' ').reverse().join(' '));
     const dateB = new Date(b.split(' ').reverse().join(' '));
 

@@ -50,7 +50,7 @@ const Tasks = () => {
     <div>
       <NavBar isSelected={isSelected} setIsSelected={setIsSelected} />
       <Filters tasks={tasks} setFilteredTasks={setFilteredTasks} setIsFiltered={setIsFiltered} />
-      {filteredTasks.length === 0 ? <NotFound /> : (
+      {filteredTasks.length === 0 && isFiltered ? <NotFound /> : (
         <>
           {isSelected === "list" ? (
             <ListView tasks={filteredTasks} isFiltered={isFiltered} />
