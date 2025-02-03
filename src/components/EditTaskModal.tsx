@@ -7,9 +7,10 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTask } from "../redux/taskSlice";
 import { addActivity, fetchActivitiesByTaskId } from "../redux/activitySlice";
+import { RootState, AppDispatch } from "../redux/store";
 
-const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType }) => {
-    const dispatch = useDispatch();
+const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType,isCompleted?:boolean ,editor?:boolean}) => {
+    const dispatch = useDispatch<AppDispatch>();
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [taskTitle, setTaskTitle] = useState<string>(task?.title || "");
     const [taskDescription, setTaskDescription] = useState<string>(task?.description || "");
@@ -23,7 +24,7 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType }) => {
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [details, setDetails] = useState<boolean>(true);
     const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
-    const activities = useSelector((state) => state.activities.activities);
+    const activities = useSelector((state:RootState) => state.activities.activities);
 
     useEffect(() => {
         const handleResize = () => {
@@ -72,7 +73,7 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType }) => {
         e.preventDefault();
 
         // Basic validation
-        if (!taskTitle || !taskDescription || !taskCategory || !taskDueDate.startDate || !taskStatus) {
+        if (!taskTitle || !taskDescription || !taskCategory || !taskDueDate?.startDate || !taskStatus) {
             toast.info("Please fill all required fields.");
             return;
         }
@@ -84,8 +85,8 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType }) => {
             description: taskDescription,
             category: taskCategory,
             due_date: taskDueDate.startDate,
-            status: taskStatus,
-            file: files.length > 0 ? await convertFileToBase64(files[0]) : task?.file || null, // Handle file updates
+            status: taskStatus as "Todo" | "In-Progress" | "Completed",
+            file: files.length > 0 ? await convertFileToBase64(files[0]) : task?.file || "", // Handle file updates
         };
 
         try {

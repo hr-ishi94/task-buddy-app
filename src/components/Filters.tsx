@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import AddTaskModal from "./AddTaskModal";
 import DropDown from "./DropDown";
-import { TaskViewProps } from "../types/types";
+import { FilterViewProps } from "../types/types";
 import { formatDate } from "../utils/constants";
 
-const Filters: FC<TaskViewProps> = ({ tasks, setFilteredTasks,setIsFiltered }) => {
+const Filters: FC<FilterViewProps> = ({ tasks, setFilteredTasks,setIsFiltered }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const dueDates = [...new Set(tasks.map((task) => formatDate(task.due_date)))]

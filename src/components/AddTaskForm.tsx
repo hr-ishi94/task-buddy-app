@@ -1,42 +1,53 @@
 import { FC, useState } from "react";
 import { Icon } from "@iconify/react";
-import Datepicker from "react-tailwindcss-datepicker";
+import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import DropDown2 from "./DropDown2";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask } from "../redux/taskSlice";
 import { toast } from "react-toastify";
+import { AppDispatch, RootState } from "../redux/store";
 
 
-
-const AddTaskForm: FC = ({setAddForm}) => {
+interface AddTaskFormProps {
+    setAddForm: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+  
+  const AddTaskForm: FC<AddTaskFormProps> = ({ setAddForm }) => {
     const [taskTitle, setTaskTitle] = useState<string>("");
     const [taskCategory, setTaskCategory] = useState<string>("");
     const [taskDueDate, setTaskDueDate] = useState<{ startDate: Date | null; endDate: Date | null }>({
         startDate: null,
         endDate: null
     });
+
+    const handleDateChange = (newValue: DateValueType) => {
+        if (newValue === null) {
+          setTaskDueDate({ startDate: null, endDate: null });
+        } else {
+          setTaskDueDate({ startDate: newValue.startDate, endDate: newValue.endDate });
+        }
+      };
+
     const [taskStatus, setTaskStatus] = useState<string>("");
 
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector((state:RootState) => state.auth.user);
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Basic validation
         if (!taskTitle || !taskCategory || !taskDueDate.startDate || !taskStatus) {
             toast.info("Please fill all required fields.");
             return;
         }
 
-        // Prepare task data
         const taskData = {
             title: taskTitle,
             category: taskCategory,
             due_date: taskDueDate.startDate,
-            status: taskStatus,
-            user: user.uid
+            status: taskStatus as "Todo" | "In-Progress" | "Completed",
+            user: user?.uid??""
         };
 
         try {
@@ -47,7 +58,7 @@ const AddTaskForm: FC = ({setAddForm}) => {
             toast.error("Failed to add task.");
         }
 
-        // Reset the form
+        
         setTaskTitle("");
         setTaskCategory("");
         setTaskDueDate({ startDate: null, endDate: null });
@@ -77,7 +88,7 @@ const AddTaskForm: FC = ({setAddForm}) => {
                             primaryColor="purple"
                             asSingle={true}
                             useRange={false}
-                            onChange={(newValue) => setTaskDueDate(newValue)}
+                            onChange={handleDateChange}
                             required
                         />
                     </div>

@@ -1,26 +1,26 @@
 import { FC, useState } from "react";
 import TaskList from "../components/TaskList";
 import GroupSelect from "../components/GroupSelect";
-import { type TaskViewProps } from "../types/types";
+import { TaskViewProps} from "../types/types";
 import { Icon } from "@iconify/react";
 
 const ListView: FC<TaskViewProps> = ({ tasks, isFiltered }) => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [selectedTasks, setSelectedTasks] = useState<string[]>([]); // Store selected task IDs
-
-  // Toggle sort order between 'asc' and 'desc'
+  const [selectedTasks, setSelectedTasks] = useState<string[]>([]); 
+  
   const handleSortChange = () => {
     setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
-  // Sorting tasks based on sortOrder state
+  
   const sortedTasks = [...tasks].sort((a, b) => {
-    const dateA = new Date(a.due_date.seconds * 1000); // Assuming `due_date` is a Timestamp
-    const dateB = new Date(b.due_date.seconds * 1000);
+    const dateA = a.due_date ? new Date(a.due_date) : new Date(0); 
+    const dateB = b.due_date ? new Date(b.due_date) : new Date(0); 
     return sortOrder === "asc"
       ? dateA.getTime() - dateB.getTime()
       : dateB.getTime() - dateA.getTime();
   });
+  
 
   return (
     <>
@@ -70,7 +70,7 @@ const ListView: FC<TaskViewProps> = ({ tasks, isFiltered }) => {
       </div>
 
       {selectedTasks.length > 0 && (
-        <div className="w-full fixed bottom-5 flex items-center justify-center z-50 ">
+        <div className="w-full fixed bottom-5 flex items-center justify-center z-50">
           <GroupSelect selectedTasks={selectedTasks} setSelectedTasks={setSelectedTasks} />
         </div>
       )}

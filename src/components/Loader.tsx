@@ -1,6 +1,7 @@
+import { FC } from "react";
 import { RotatingLines } from "react-loader-spinner";
 
-const Loader=()=> {
+const Loader:FC=()=> {
   return (
     <div className="flex items-center justify-center h-screen">
 

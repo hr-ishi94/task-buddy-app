@@ -16,7 +16,7 @@ const TaskList = ({
   }: {
     listType: ListType["listType"];
     tasks?: TaskType[];
-    isFiltered: boolean;
+    isFiltered?: boolean;
     selectedTasks: string[];
     setSelectedTasks: (tasks: string[]) => void;
   }) => {
@@ -101,19 +101,22 @@ const TaskList = ({
                                 <EditTaskModal task={task} isCompleted ={listType ==='Completed'} />
                                 </td>
                                 <td className="px-16 py-4 w-1/6 max-md:hidden text-center">
-                                   {
-                                                                           // Conditionally check and format the date
-                                    (() => {
-                                    const taskDueDate = new Date(task.due_date);
+                                    {
+                                        (() => {
+                                            
+                                            const taskDueDate = new Date(task.due_date);
 
-                                    // Check if the date is today
-                                    return isToday(taskDueDate)
-                                        ? 'Today'  // If it's today, show "Today"
-                                        : format(taskDueDate, 'dd MMM, yyyy');  // Otherwise, format as "DD MMM, YYYY"
-                                    })()
-                                }
-
+                                            
+                                            if (isNaN(taskDueDate.getTime())) {
+                                                return 'Invalid Date';
+                                            }
+                                            return isToday(taskDueDate)
+                                                ? 'Today' 
+                                                : format(taskDueDate, 'dd MMM, yyyy');
+                                        })()
+                                    }
                                 </td>
+
                                 <td className="px-16 py-4 w-1/5 max-md:hidden text-center">
                                     <DropDown1 currValue = {task.status} taskId={task.id}/>
                                 </td>

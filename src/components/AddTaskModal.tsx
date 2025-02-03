@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTask } from "../redux/taskSlice";
 import { toast } from "react-toastify";
 import { addActivity } from "../redux/activitySlice";
+import { AppDispatch, RootState } from "../redux/store";
 
 const AddTaskModal: FC = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -45,54 +46,71 @@ const AddTaskModal: FC = () => {
     };
 
 
-    const user = useSelector((state)=>state.auth.user)
+    const user = useSelector((state:RootState)=>state.auth.user)
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
     
-        // Basic validation
-        if (!taskTitle || !taskDescription || !taskCategory || !taskDueDate.startDate || !taskStatus) {
+        if (!taskTitle || !taskDescription || !taskCategory || !taskDueDate?.startDate || !taskStatus) {
             toast.info("Please fill all required fields.");
             return;
         }
     
-        // Convert the file to Base64 (if a file is selected)
-        let fileBase64 = null;
+        let fileBase64: string | undefined = undefined;  // Change this to `undefined` instead of `null`
         if (files.length > 0) {
-            const file = files[0]; // Assuming you only allow one file
+            const file = files[0];
             fileBase64 = await convertFileToBase64(file);
         }
-    
-        // Prepare task data
+        
+        const userId = user?.uid || ""
+
+        const taskDueDateString = taskDueDate?.startDate ? taskDueDate.startDate.toISOString() : "";
+
+        const allowedStatuses = ["Todo", "In-Progress", "Completed"];
+            if (!allowedStatuses.includes(taskStatus)) {
+                toast.info("Invalid task status.");
+                return;
+            }
+
         const taskData = {
             title: taskTitle,
             description: taskDescription,
             category: taskCategory,
-            due_date: taskDueDate.startDate ? taskDueDate.startDate.toISOString() : null,
-            status: taskStatus,
-            user: user.uid,
-            file: fileBase64, // Add the Base64-encoded file to the task data
+            due_date: taskDueDateString,
+            status: taskStatus as "Todo" | "In-Progress" | "Completed",
+            user: userId,
+            file: fileBase64, 
         };
     
         try {
-            const res = await dispatch(addTask(taskData));
-            console.log(res,'ddd')
-            await dispatch(
-                            addActivity({
-                                activity: `Created task: ${taskTitle}`,
-                                task_id: res?.payload.id || "",
-                                updated_date: new Date().toISOString(),
-                            })
-                        );
-            toast.success("Task added successfully!");
+            // Dispatch the action and check if it was successful
+            const resultAction = await dispatch(addTask(taskData));
+    
+            if (addTask.fulfilled.match(resultAction)) {
+                // Access the payload which contains the task data
+                const task = resultAction.payload; // This will be of type TaskType
+                console.log(task, 'Task added successfully');
+    
+                // You can safely access task.id, task.title, etc.
+                await dispatch(
+                    addActivity({
+                        activity: `Created task: ${task.title}`,
+                        task_id: task.id || "",
+                        updated_date: new Date().toISOString(),
+                    })
+                );
+                toast.success("Task added successfully!");
+            } else {
+                toast.error("Failed to add task.");
+            }
         } catch (error) {
             console.error("Error adding task:", error);
             toast.error("Failed to add task.");
         }
     
-        // Reset the form
+        
         setTaskTitle("");
         setTaskDescription("");
         setTaskCategory("");
@@ -102,13 +120,13 @@ const AddTaskModal: FC = () => {
         setIsOpen(false);
     };
     
-    // Helper function to convert a file to Base64
+    
     const convertFileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-                // Remove the data URL prefix (e.g., "data:image/png;base64,")
+               
                 const base64String = (reader.result as string).split(",")[1];
                 resolve(base64String);
             };

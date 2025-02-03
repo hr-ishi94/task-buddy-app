@@ -4,13 +4,15 @@ import EditTaskModal from "./EditTaskModal";
 import { deleteTask } from "../redux/taskSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { TaskType } from "../types/types";
+import { AppDispatch } from "../redux/store";
 
-const DropDown2 = ({ selectType, options, onSelect ,taskId,task}: { selectType: any; options?: string[]; onSelect: (selected: string) => void;taskId:string }) => {
+const DropDown2 = ({ selectType, options, onSelect ,taskId,task}: { selectType: any; options?: string[]; onSelect?: (selected: string) => void;taskId?:string ,task?:TaskType}) => {
   
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null); // Track selected option
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); 
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,12 +29,12 @@ const DropDown2 = ({ selectType, options, onSelect ,taskId,task}: { selectType: 
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
-    onSelect(option); 
+    onSelect?.(option); 
     setIsOpen(false); 
   };
 
   const handleDeleteTask = () => {
-    dispatch(deleteTask(taskId));
+    dispatch(deleteTask(taskId || ''));
     setIsOpen(false);
     toast.success("Task Deleted Successfully!")
   };
@@ -40,17 +42,19 @@ const DropDown2 = ({ selectType, options, onSelect ,taskId,task}: { selectType: 
   return (
     <div className={`relative  ${selectedOption? "bg-gray-300 px-3 py-1 rounded-lg w-full":options?"border-2 rounded-full border-gray-300 p-2":"px-3"}`} ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="text-gray-600 flex items-center justify-center text-sm cursor-pointer "
-        type="button"
-        aria-expanded={isOpen.toString()}
-        aria-haspopup="true"
-      >
-        {selectedOption?
-        
-        <h1 className="uppercase text-xs text-gray-800 font-semibold">{selectedOption}</h1>
-        :<Icon icon={`${selectType}`} width="24" height="24" />}
-      </button>
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="text-gray-600 flex items-center justify-center text-sm cursor-pointer "
+          type="button"
+          aria-expanded={isOpen}  // Pass the boolean directly
+          aria-haspopup="true"
+        >
+          {selectedOption ? (
+            <h1 className="uppercase text-xs text-gray-800 font-semibold">{selectedOption}</h1>
+          ) : (
+            <Icon icon={`${selectType}`} width="24" height="24" />
+          )}
+        </button>
+
 
       {isOpen && (
         <div className="absolute right-8 top-3 z-10 mt-2 w-32 bg-white rounded-lg border-2 shadow-lg divide-y divide-gray-100">

@@ -5,23 +5,23 @@ import NavBar from "../components/NavBar";
 import Filters from "../components/Filters";
 import ListView from "./ListView";
 import BoardView from "./BoardView";
-// import  RootState  from "../redux/store";
 import { TaskType, ViewType } from "../types/types";
 import NotFound from "../components/NotFound";
-import  Loader  from "../components/Loader";
+import Loader from "../components/Loader";
+import { AppDispatch, RootState } from "../redux/store";
 
 const Tasks = () => {
-  const dispatch = useDispatch();
-  const { tasks, status, error } = useSelector((state) => state.tasks);
-  const user = useSelector((state) => state.auth.user);
-  
+  const dispatch = useDispatch<AppDispatch>();
+  const { tasks, status, error } = useSelector((state: RootState) => state.tasks); // Add RootState type here
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [isSelected, setIsSelected] = useState<ViewType>("list");
   const [filteredTasks, setFilteredTasks] = useState<TaskType[]>([]);
-  const [isFiltered, setIsFiltered] = useState(false)
-  console.log(isFiltered,'klklkl')
+  const [isFiltered, setIsFiltered] = useState<boolean>(false);
+
   useEffect(() => {
     if (user) {
-      dispatch(fetchTasks(user.uid)); 
+      dispatch(fetchTasks(user.uid));
     }
   }, [dispatch, user]);
 
@@ -40,24 +40,23 @@ const Tasks = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (status === "loading"){
-
-    return <Loader/>
-  } 
-  // if (status === "failed") return <p>Error: {error}</p>;
+  if (status === "loading") {
+    return <Loader />;
+  }
 
   return (
     <div>
       <NavBar isSelected={isSelected} setIsSelected={setIsSelected} />
-      <Filters tasks={tasks} setFilteredTasks={setFilteredTasks} setIsFiltered = {setIsFiltered}/>
-      {filteredTasks.length === 0 ? <NotFound/>:<>
-      {isSelected === "list" ? (
-        <ListView tasks={filteredTasks} isFiltered={isFiltered}/>
-      ) : (
-        <BoardView tasks={filteredTasks} isFiltered={isFiltered}/>
+      <Filters tasks={tasks} setFilteredTasks={setFilteredTasks} setIsFiltered={setIsFiltered} />
+      {filteredTasks.length === 0 ? <NotFound /> : (
+        <>
+          {isSelected === "list" ? (
+            <ListView tasks={filteredTasks} isFiltered={isFiltered} />
+          ) : (
+            <BoardView tasks={filteredTasks} isFiltered={isFiltered} />
+          )}
+        </>
       )}
-      </>}
-      
     </div>
   );
 };

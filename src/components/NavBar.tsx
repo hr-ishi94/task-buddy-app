@@ -6,12 +6,13 @@ import { signOut } from "firebase/auth"
 import { auth } from "../config/firebase"
 import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
+import { RootState } from "../redux/store"
 
 
 
 const NavBar:FC<NavProps> = ({isSelected,setIsSelected}:any) => {
 
-    const user = useSelector((state)=>state.auth.user)
+    const user = useSelector((state:RootState)=>state.auth.user)
 
     const navigate = useNavigate()
     const LogOut =()=>{

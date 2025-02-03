@@ -1,12 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { TaskType } from "../types/types";
+import { DropDownProps} from "../types/types";
 
-type DropDownProps = {
-  title: string;
-  data?: string[];
-  tasks: TaskType[];
-  setFilteredTasks: (tasks: TaskType[]) => void;
-};
+
 
 const DropDown = ({ title, data, tasks, setFilteredTasks,setIsFiltered }: DropDownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
