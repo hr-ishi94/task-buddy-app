@@ -110,13 +110,11 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType,isComplet
         }
     };
 
-    // Helper function to convert a file to Base64
     const convertFileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-                // Remove the data URL prefix (e.g., "data:image/png;base64,")
                 const base64String = (reader.result as string).split(",")[1];
                 resolve(base64String);
             };

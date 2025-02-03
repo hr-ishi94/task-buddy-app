@@ -85,15 +85,12 @@ const AddTaskModal: FC = () => {
         };
     
         try {
-            // Dispatch the action and check if it was successful
             const resultAction = await dispatch(addTask(taskData));
     
             if (addTask.fulfilled.match(resultAction)) {
-                // Access the payload which contains the task data
-                const task = resultAction.payload; // This will be of type TaskType
+                const task = resultAction.payload;
                 console.log(task, 'Task added successfully');
     
-                // You can safely access task.id, task.title, etc.
                 await dispatch(
                     addActivity({
                         activity: `Created task: ${task.title}`,
