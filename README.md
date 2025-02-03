@@ -1,50 +1,98 @@
-# React + TypeScript + Vite
+# **Task Buddy - Task Management App**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## **Introduction**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Task Buddy is a task management application designed to help users organize, prioritize, and track their tasks efficiently. Built with modern frontend technologies and integrated with Google Firebase for real-time data management, Task Buddy offers a seamless user experience for managing daily tasks.
 
-## Expanding the ESLint configuration
+## **Key Features:**
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Create, update, and delete tasks.
 
-- Configure the top-level `parserOptions` property like this:
+- Real-time synchronization using Firebase.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- User authentication and secure data storage.
+
+- Intuitive and responsive user interface.
+
+## **Technologies Used**
+
+- React JS: For building the user interface.
+
+- TypeScript: For adding type safety and improving code quality.
+
+- Google Firebase: For backend services, including authentication, database, and hosting.
+
+- Redux: For state management across the application.
+
+## **Installation**
+
+To set up Task Buddy locally, follow these steps:
+
+## Clone the repository:
+
+
+```bash
+git clone https://github.com/username/task-buddy.git
+Navigate to the project directory:
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cd task-buddy
+Install dependencies:
 ```
+
+```bash
+npm install
+Build the project:
+```
+
+```bash
+npm run build
+Start the development server:
+```
+
+```bash
+npm start
+Open your browser and visit http://localhost:3000 to view the app.
+```
+
+## **Usage**
+
+**Sign Up/Log In:** Create an account or log in using your google account.
+
+**Add Tasks:** Click on the "Add Task" button to create a new task.
+
+**Edit or Delete Tasks:** Use the edit and delete icons to manage your tasks.
+
+**Real-Time Updates:** All changes are synchronized in real-time using Firebase.
+
+
+## **Features**
+
+**User Authentication:** Secure sign-up and login using Firebase Authentication.
+
+**Task Management:** Create, update, and delete tasks with ease.
+
+**Real-Time Sync:** Changes are reflected instantly across all devices.
+
+**Responsive Design:** Works seamlessly on desktop, tablet, and mobile devices.
+
+## **Live Link:** [TaskBuddy](https://taskbuddy-sable.vercel.app/)
+
+## Pending Tasks of Assessment
+
+- **Attachment Feature:**
+Due to billing issues with Google Cloud Storage, I was unable to implement the file storage functionality on the cloud. As a temporary workaround, I converted files to Base64 format for storage. However, this approach has introduced some bugs that need to be addressed.
+
+- **Drag-and-Drop Task Arrangement:**
+The drag-and-drop functionality for rearranging tasks remains incomplete due to time constraints. This feature is essential for improving user experience and task management flexibility.
+
+Special thanks to The Alter Office for providing the assinment and the resources.
+
+Contact
+For questions, feedback, or support, please reach out to:
+
+Your Name: hrishikeshprasadc@gmail.com
+
+Project Repository: [GitHub Repository Link](https://github.com/hr-ishi94/task-buddy-app/)
