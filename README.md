@@ -29,33 +29,34 @@ Task Buddy is a task management application designed to help users organize, pri
 
 To set up Task Buddy locally, follow these steps:
 
-## Clone the repository:
 
+**Clone the repository:**
 
 ```bash
 git clone https://github.com/username/task-buddy.git
-Navigate to the project directory:
 ```
+**Navigate to the project directory:**
 
 ```bash
 cd task-buddy
-Install dependencies:
 ```
+**Install dependencies:**
 
 ```bash
 npm install
-Build the project:
 ```
+**Build the project:**
 
 ```bash
 npm run build
-Start the development server:
 ```
+**Start the development server:**
 
 ```bash
 npm start
-Open your browser and visit http://localhost:3000 to view the app.
 ```
+**Open your browser and visit http://localhost:5173/ to view the app.**
+
 
 ## **Usage**
 
