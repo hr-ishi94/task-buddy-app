@@ -79,6 +79,12 @@ npm start
 
 **Responsive Design:** Works seamlessly on desktop, tablet, and mobile devices.
 
+## **Challenges Faced**
+
+One of the biggest challenges I faced was working with TypeScript, as I had no prior experience with it. Initially, I was concerned, but I dedicated a full day to learning it and successfully completed the assignment.
+
+This became a key achievement for me, as I had been considering to learn TypeScript for a while. Working with it helped me understand type errors early, improving code quality and debugging efficiency. This experience strengthened my ability to quickly adapt, learn new technologies, and deliver results under tight deadlines.
+
 ## **Live Link:** [TaskBuddy](https://taskbuddy-sable.vercel.app/)
 
 ## Pending Tasks of Assessment
