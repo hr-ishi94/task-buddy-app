@@ -58,11 +58,12 @@ const AddTaskModal: FC = () => {
             return;
         }
     
-        let fileBase64: string | undefined = undefined;  // Change this to `undefined` instead of `null`
+        let fileBase64: string | undefined = undefined;
         if (files.length > 0) {
             const file = files[0];
-            fileBase64 = await convertFileToBase64(file);
+            fileBase64 = await convertFileToBase64(file) ?? undefined; 
         }
+
         
         const userId = user?.uid || ""
 
@@ -74,15 +75,30 @@ const AddTaskModal: FC = () => {
                 return;
             }
 
-        const taskData = {
-            title: taskTitle,
-            description: taskDescription,
-            category: taskCategory,
-            due_date: taskDueDateString,
-            status: taskStatus as "Todo" | "In-Progress" | "Completed",
-            user: userId,
-            file: fileBase64, 
-        };
+            const taskData: {
+                title: string;
+                description: string;
+                category: string;
+                due_date: string;
+                status: "Todo" | "In-Progress" | "Completed";
+                user: string;
+                file?: string;  
+            } = {
+                title: taskTitle,
+                description: taskDescription,
+                category: taskCategory,
+                due_date: taskDueDateString,
+                status: taskStatus as "Todo" | "In-Progress" | "Completed",
+                user: userId,
+            };
+            
+            
+            
+
+
+        if (fileBase64) {
+            taskData.file = fileBase64; 
+        }
     
         try {
             const resultAction = await dispatch(addTask(taskData));
@@ -118,18 +134,19 @@ const AddTaskModal: FC = () => {
     };
     
     
-    const convertFileToBase64 = (file: File): Promise<string> => {
+    const convertFileToBase64 = (file: File): Promise<string | undefined> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-               
-                const base64String = (reader.result as string).split(",")[1];
+                const base64String = reader.result ? (reader.result as string).split(",")[1] : undefined;
                 resolve(base64String);
             };
             reader.onerror = (error) => reject(error);
         });
     };
+    
+    
     return (
         <div>
             <button
