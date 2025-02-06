@@ -13,7 +13,7 @@ const ListView: FC<TaskViewProps> = ({ tasks, isFiltered }) => {
   };
 
   const [refresh, setRefresh] = useState(false);
-
+  console.log(refresh,'ll')
   const handleStatusUpdate = () => {
     setRefresh((prev) => !prev); // Toggle state to force re-render
   };
