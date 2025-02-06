@@ -45,7 +45,7 @@ const DropDown2 = ({ selectType, options, onSelect ,taskId,task}: { selectType: 
           onClick={() => setIsOpen((prev) => !prev)}
           className="text-gray-600 flex items-center justify-center text-sm cursor-pointer "
           type="button"
-          aria-expanded={isOpen}  // Pass the boolean directly
+          aria-expanded={isOpen}  
           aria-haspopup="true"
         >
           {selectedOption ? (

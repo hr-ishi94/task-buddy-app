@@ -69,46 +69,49 @@ interface AddTaskFormProps {
     return (
         <div className="bg-customBg w-full h-10 py-14 border-red-100 flex items-center px-10 border-b-2">
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 justify-center">
-                <div className="flex justify-around items-center w-full gap-28">
-                    <input
-                        type="text"
-                        placeholder="Task Title"
-                        className="bg-customBg text-xs py font-medium ml-10 py-2 pr-10 focus:outline-none focus:bg-gray-200 px-2 "
-                        value={taskTitle}
-                        onChange={(e) => setTaskTitle(e.target.value)}
+            <div className="flex justify-between items-center w-full gap-32">
+                
+                <input
+                    type="text"
+                    placeholder="Task Title"
+                    className="bg-customBg text-xs font-medium ml-10 py-2 pr-10 px-2 focus:outline-none focus:bg-gray-200 w-72 rounded-lg"
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                    required
+                />
+
+                <div className="relative max-w-xs ml-16 w-28">
+                    <Datepicker
+                        placeholder="Add date"
+                        containerClassName="flex items-center text-xs border-gray-300 border-2 px-1 py-1 rounded-full w-full"
+                        inputClassName="bg-customBg w-full"
+                        value={taskDueDate}
+                        primaryColor="purple"
+                        asSingle={true}
+                        useRange={false}
+                        onChange={handleDateChange}
                         required
                     />
-
-                    <div className="relative  max-w-xs ml-36 ">
-                        <Datepicker
-                            placeholder="Add date"
-                            containerClassName="flex items-center text-xs border-gray-300 border-2 px-1 py-1 rounded-full"
-                            inputClassName="bg-customBg"
-                            value={taskDueDate}
-                            primaryColor="purple"
-                            asSingle={true}
-                            useRange={false}
-                            onChange={handleDateChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="mr-8 mt-1 ">
-                        <DropDown2
-                            selectType={'ic:baseline-plus'}
-                            options={["Todo", "In-Progress", "Completed"]}
-                            onSelect={(status) => setTaskStatus(status)}
-                        />
-                    </div>
-
-                    <div className="ml-12 mt-1 ">
-                        <DropDown2
-                            selectType={'ic:baseline-plus'}
-                            options={["Work", "Personal"]}
-                            onSelect={(category) => setTaskCategory(category)}
-                        />
-                    </div>
                 </div>
+                <div className="flex w-40">
+                    <div className="px-3 ">
+                    <DropDown2
+                        selectType={'ic:baseline-plus'}
+                        options={["Todo", "In-Progress", "Completed"]}
+                        onSelect={(status) => setTaskStatus(status)}
+                        />
+                        </div>
+                </div>
+
+                <div className="">
+                    <DropDown2
+                        selectType={'ic:baseline-plus'}
+                        options={["Work", "Personal"]}
+                        onSelect={(category) => setTaskCategory(category)}
+                    />
+                </div>
+            </div>
+
 
                 <div className="flex gap-3 px-10">
                     <button

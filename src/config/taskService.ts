@@ -69,6 +69,7 @@ export const updateTaskInFirestore = async (
       attachment: updatedTask.attachment ?? "",
     };
   } catch (error) {
+    
     console.error("Error updating task:", error);
     throw new Error("Failed to update task.");
   }

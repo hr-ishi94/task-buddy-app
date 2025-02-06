@@ -37,10 +37,51 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType,isComplet
 
     useEffect(() => {
         if (task) {
-            // Fetch activities for a specific task when the task is available
             dispatch(fetchActivitiesByTaskId({ taskId: task.id }));
         }
     }, [dispatch, task]);
+
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+    
+        if (!taskTitle || !taskDescription || !taskCategory || !taskDueDate?.startDate || !taskStatus) {
+            toast.info("Please fill all required fields.");
+            return;
+        }
+
+        
+        const updatedTask = {
+            id: task?.id || "", 
+            title: taskTitle,
+            description: taskDescription,
+            category: taskCategory,
+            due_date: taskDueDate.startDate,
+            status: taskStatus as "Todo" | "In-Progress" | "Completed",
+            file: files.length > 0 ? await convertFileToBase64(files[0]) : task?.file || "", // Handle file updates
+        };
+
+        try {
+           
+            await dispatch(updateTask({ id: task?.id || "", updatedTask }));
+            toast.success("Task updated successfully!");
+
+            
+            await dispatch(
+                addActivity({
+                    activity: `Updated task: ${taskTitle}`,
+                    task_id: task?.id || "",
+                    updated_date: new Date().toISOString(),
+                })
+            );
+
+            setIsEditOpen(false); 
+        } catch (error) {
+            console.error("Error updating task:", error);
+            toast.error("Failed to update task.");
+        }
+    };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -69,46 +110,7 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType,isComplet
         setTaskDueDate(newValue);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Basic validation
-        if (!taskTitle || !taskDescription || !taskCategory || !taskDueDate?.startDate || !taskStatus) {
-            toast.info("Please fill all required fields.");
-            return;
-        }
-
-        // Prepare task data
-        const updatedTask = {
-            id: task?.id || "", // Ensure the task ID is included
-            title: taskTitle,
-            description: taskDescription,
-            category: taskCategory,
-            due_date: taskDueDate.startDate,
-            status: taskStatus as "Todo" | "In-Progress" | "Completed",
-            file: files.length > 0 ? await convertFileToBase64(files[0]) : task?.file || "", // Handle file updates
-        };
-
-        try {
-            // Dispatch the updateTask action
-            await dispatch(updateTask({ id: task?.id || "", updatedTask }));
-            toast.success("Task updated successfully!");
-
-            // Log activity
-            await dispatch(
-                addActivity({
-                    activity: `Updated task: ${taskTitle}`,
-                    task_id: task?.id || "",
-                    updated_date: new Date().toISOString(),
-                })
-            );
-
-            setIsEditOpen(false); // Close the modal after successful update
-        } catch (error) {
-            console.error("Error updating task:", error);
-            toast.error("Failed to update task.");
-        }
-    };
+   
 
     const convertFileToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -142,7 +144,7 @@ const EditTaskModal = ({ task, isCompleted ,editor}: { task?: TaskType,isComplet
 
             {isEditOpen && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50 max-md:items-end overflow-y-auto">
-                    <div className="relative w-2/3 h-[80%] max-h-[90vh] min-h-[fit-content] bg-white rounded-lg shadow-sm max-md:w-full max-md:max-h-[92vh] overflow-y-auto">
+                    <div className="relative w-2/3 h-[90%] max-h-[90vh] min-h-[fit-content] bg-white rounded-lg shadow-sm max-md:w-full max-md:max-h-[92vh] overflow-y-auto">
                         <div className="flex items-center justify-between p-4 border-b-2 rounded-t border-gray-200">
                             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                                 Edit Task

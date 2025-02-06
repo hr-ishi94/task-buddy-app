@@ -12,7 +12,7 @@ import { AppDispatch, RootState } from "../redux/store";
 
 const Tasks = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { tasks, status, error } = useSelector((state: RootState) => state.tasks); // Add RootState type here
+  const { tasks, status, error } = useSelector((state: RootState) => state.tasks);
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [isSelected, setIsSelected] = useState<ViewType>("list");
@@ -24,6 +24,7 @@ const Tasks = () => {
       dispatch(fetchTasks(user.uid));
     }
   }, [dispatch, user]);
+
 
   useEffect(() => {
     setFilteredTasks(tasks);

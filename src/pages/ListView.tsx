@@ -12,6 +12,12 @@ const ListView: FC<TaskViewProps> = ({ tasks, isFiltered }) => {
     setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
+  const [refresh, setRefresh] = useState(false);
+
+  const handleStatusUpdate = () => {
+    setRefresh((prev) => !prev); // Toggle state to force re-render
+  };
+
   
   const sortedTasks = [...tasks].sort((a, b) => {
     const dateA = a.due_date ? new Date(a.due_date) : new Date(0); 
@@ -71,7 +77,7 @@ const ListView: FC<TaskViewProps> = ({ tasks, isFiltered }) => {
 
       {selectedTasks.length > 0 && (
         <div className="w-full fixed bottom-5 flex items-center justify-center z-50">
-          <GroupSelect selectedTasks={selectedTasks} setSelectedTasks={setSelectedTasks} />
+          <GroupSelect selectedTasks={selectedTasks} setSelectedTasks={setSelectedTasks} onStatusUpdate={handleStatusUpdate}/>
         </div>
       )}
     </>

@@ -6,11 +6,11 @@ import EditTaskModal from "./EditTaskModal";
 const TaskBoard = ({
   boardType,
   tasks,
-  isFiltered = false, // Provide a default value to handle cases where isFiltered is undefined
+  isFiltered = false, 
 }: {
   boardType: ListType["listType"];
   tasks?: TaskType[];
-  isFiltered?: boolean; // Make it optional if it can be undefined
+  isFiltered?: boolean; 
 }) => {
   const bgColor: string =
     {
@@ -28,13 +28,13 @@ const TaskBoard = ({
   }
 
   return (
-    <div className={`w-full max-w-sm bg-customBg rounded-lg px-3 ${isFiltered ? "h-auto" : "h-[95%]"}`}>
+    <div className={`w-full max-w-sm bg-customBg rounded-lg px-3  pb-1 ${isFiltered ? "h-auto" : "h-[80vh]"}`}>
       <h1 className={`mt-3 inline-block px-1 text-xs font-medium text-center py-1 uppercase rounded-md ${bgColor}`}>
         {boardType}
       </h1>
 
       {currTasks.length !== 0 ? (
-        <div className={`overflow-y-auto scrollbar-hidden flex flex-col ${isFiltered ? "" : "h-[93%]"}`}>
+        <div className={`overflow-y-auto scrollbar-hidden flex flex-col ${isFiltered ? "" : "h-full"}`}>
           <>
             {currTasks.map((task) => (
               <div key={task.id} className="bg-white w-full min-h-28 rounded-lg my-2 flex flex-col justify-between py-2">
@@ -53,7 +53,7 @@ const TaskBoard = ({
 
                         
                         if (isNaN(taskDueDate.getTime())) {
-                            return 'Invalid Date';
+                            return 'Today';
                         }
                         return isToday(taskDueDate)
                             ? 'Today' 

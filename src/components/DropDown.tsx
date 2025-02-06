@@ -22,16 +22,27 @@ const DropDown = ({ title, data, tasks, setFilteredTasks,setIsFiltered }: DropDo
   }, []);
 
   const handleSelect = (value: string) => {
-    setIsFiltered(true)
+    setIsFiltered(true);
     setSelected(value);
     setIsOpen(false);
   
     if (title === "Category") {
       setFilteredTasks(tasks.filter((task) => task.category === value));
     } else if (title === "Due Date") {
-      setFilteredTasks(tasks.filter((task) => task.due_date === value));
+      const selectedDate = new Date(value);
+      selectedDate.setHours(0, 0, 0, 0); // Normalize the date
+  
+      setFilteredTasks(tasks.filter((task) => {
+        if (!task.due_date) return false; // Skip tasks without due_date
+  
+        const taskDate = new Date(task.due_date);
+        taskDate.setHours(0, 0, 0, 0); // Normalize the stored task date
+  
+        return taskDate.getTime() === selectedDate.getTime();
+      }));
     }
   };
+  
   
 
   return (
@@ -43,7 +54,24 @@ const DropDown = ({ title, data, tasks, setFilteredTasks,setIsFiltered }: DropDo
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        {selected || title}
+      {(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let displayText = selected;
+
+        if (selected) {
+          const selectedDate = new Date(selected);
+          selectedDate.setHours(0, 0, 0, 0);
+
+          if (selectedDate.getTime() === today.getTime()) {
+            displayText = "Today";
+          }
+        }
+
+        return displayText || title;
+      })()}
+
         <svg
           className={`w-3 h-3 ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`}
           xmlns="http://www.w3.org/2000/svg"
@@ -58,17 +86,29 @@ const DropDown = ({ title, data, tasks, setFilteredTasks,setIsFiltered }: DropDo
       {isOpen && (
         <div className="absolute z-10 mt-2 bg-white rounded-lg border-2 shadow-lg">
           <ul className="text-sm text-gray-700">
-            {(data?.length ? data : ["Work", "Personal"]).map((item, index) => (
-              <li key={index}>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  onClick={() => handleSelect(item)}
-                >
-                  {item}
-                </button>
-              </li>
-            ))}
-            {/* Reset Filter Option */}
+          {(data?.length ? data : ["Work", "Personal"])
+
+            .filter(item => item !== "") 
+            .map((item, index) => {
+              const itemDate = new Date(item);
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              itemDate.setHours(0, 0, 0, 0);
+
+              const displayText = itemDate.getTime() === today.getTime() ? "Today" : item;
+
+              return (
+                <li key={index}>
+                  <button
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                    onClick={() => handleSelect(item)}
+                  >
+                    {displayText}
+                  </button>
+                </li>
+              );
+            })}
+
             <li>
               <button
                 className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"

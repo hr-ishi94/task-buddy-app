@@ -33,6 +33,7 @@ const TaskList = ({
     if (isFiltered && currTasks.length === 0) {
         return null
     }
+    
 
     const handleCheckboxChange = (taskId: string) => {
         setSelectedTasks(
@@ -108,7 +109,7 @@ const TaskList = ({
 
                                             
                                             if (isNaN(taskDueDate.getTime())) {
-                                                return 'Invalid Date';
+                                                return 'Today';
                                             }
                                             return isToday(taskDueDate)
                                                 ? 'Today' 
@@ -117,7 +118,7 @@ const TaskList = ({
                                     }
                                 </td>
 
-                                <td className="px-16 py-4 w-1/5 max-md:hidden text-center">
+                                <td className="px-14 font-semibold py-4 w-1/6 max-md:hidden text-center">
                                     <DropDown1 currValue = {task.status} taskId={task.id}/>
                                 </td>
                                 <td className="pl-16 text-center py-4 w-1/6 max-md:hidden">

@@ -7,13 +7,13 @@ import { formatDate } from "../utils/constants";
 const Filters: FC<FilterViewProps> = ({ tasks, setFilteredTasks,setIsFiltered }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const dueDates = [...new Set(tasks.map((task) => formatDate(task.due_date)))]
-  .sort((a, b) => {
-    const dateA = new Date(a.split(' ').reverse().join(' '));
-    const dateB = new Date(b.split(' ').reverse().join(' '));
-
-    return dateA.getTime() - dateB.getTime();
-  });
+  const dueDates = tasks.length > 0
+  ? [...new Set(tasks.map((task) => formatDate(task.due_date)))].sort((a, b) => {
+      const dateA = new Date(a.split(' ').reverse().join(' '));
+      const dateB = new Date(b.split(' ').reverse().join(' '));
+      return dateA.getTime() - dateB.getTime();
+    })
+  : [""];
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();

@@ -38,13 +38,13 @@ export const formatDate = (due_date: string | Date | Timestamp): string => {
   }
 
  
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); 
-  date.setHours(0, 0, 0, 0);    
+  // const today = new Date();
+  // today.setHours(0, 0, 0, 0); 
+  // date.setHours(0, 0, 0, 0);    
 
-  if (date.getTime() === today.getTime()) {
-    return "Today";
-  }
+  // if (date.getTime() === today.getTime()) {
+  //   return "Today";
+  // }
 
   
   const day = String(date.getDate()).padStart(2, '0');
